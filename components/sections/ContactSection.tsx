@@ -1,7 +1,8 @@
 import React from 'react';
-import telegramQr from './qr/telegram.png';
-import twitterQr from './qr/twitter.png';
-import instagramQr from './qr/instagram.png';
+
+const telegramQr = new URL('./qr/telegram.svg', import.meta.url).href;
+const twitterQr = new URL('./qr/twitter.svg', import.meta.url).href;
+const instagramQr = new URL('./qr/instagram.svg', import.meta.url).href;
 
 const SocialCard = ({ name, url, delay, imgSrc }: { name: string, url: string, delay: number, imgSrc: string }) => (
   <div 

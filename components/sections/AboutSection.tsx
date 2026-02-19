@@ -1,5 +1,6 @@
 import React from 'react';
-import avatarImg from './pic/logo.jpg';
+
+const avatarImg = new URL('./pic/logo.jpg', import.meta.url).href;
 
 const AboutSection: React.FC = () => {
   return (
@@ -32,10 +33,10 @@ const AboutSection: React.FC = () => {
         
         <div className="prose prose-invert border-l-2 border-accent2 pl-4">
           <p className="text-slate-300 leading-relaxed font-text text-lg">
-            Video is a reflection of the author's soul. If the viewer doesn't feel you when watching your video, it means the editor didn't do a good job of creating quality. I'm here to correct this misunderstanding.
+            The quick brown fox jumps over the lazy dog. Sphinx of black quartz, judge my vow. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump!
           </p>
           <p className="text-slate-400 mt-4 leading-relaxed font-text">
-            For me, video isn't just a shell that shows something. Three years of professional editing experience have taught me: every video is a piece of my soul, including yours as the editor. And I put my whole soul into each video, so the viewer will hold their breath.
+            I specialize in crafting visual narratives that engage and retain audiences. From high-retention vertical shorts to complex documentary-style essays, I bring a sharp eye for pacing and aesthetics to every project.
           </p>
         </div>
 

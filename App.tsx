@@ -10,6 +10,65 @@ import TerminalSection from './components/sections/TerminalSection';
 import { DesktopIcon } from './components/Icons';
 import { SectionType, VideoData } from './types';
 
+const staticVideoData: VideoData = {
+  fullLength: [
+    {
+      id: "fl-1",
+      title: "Visualizations that sell",
+      subtitle: "or how animations make your video come alive",
+      difficulty: "medium",
+      text: "This video was a kind of test for me. It was important to me to show that even simple visual editing can be appealing. I think I succeeded.",
+      url: "https://youtu.be/kli9SjiCXG4?si=aPhEn34GGnS9R6ls"
+    },
+    {
+      id: "fl-2",
+      title: "Accentuation as a lifeline",
+      subtitle: "A brief overview of how editing can save even hopeless videos.",
+      difficulty: "easy",
+      text: "Initially, the narrator of this video had very poor speech delivery, making it incredibly difficult to engage the viewer, but I was able to find an individual approach, taking the video to a new level.",
+      url: "https://youtu.be/kquBMQTlAqA?si=9AP84Z6MBmNkGko-"
+    }
+  ],
+  vertical: [
+    {
+      id: "v-1",
+      title: "The power of numbers",
+      text: "When you need to make a boring lecture beautiful",
+      url: "https://youtu.be/ruGOtcqJ5sg?si=_Sf1plwtZwr2us8h"
+    },
+    {
+      id: "v-2",
+      title: "AI Duo",
+      text: "A clear illustration of why neural networks with humans at the helm are powerful.",
+      url: "https://youtu.be/ZSzZw7AmOzE?si=54_5GsxoAf0cyxRF"
+    },
+    {
+      id: "v-3",
+      title: "Podcasts are almighty",
+      text: "Medical concerns in simple terms.",
+      url: "https://youtu.be/Iob_g3vITyI"
+    }
+  ],
+  motionGraphics: [
+    {
+      id: "mg-1",
+      title: "Animated presentation",
+      subtitle: "But at least it's not boring to watch.",
+      difficulty: "medium",
+      text: "The idea for this animation came from Max.Mov's video of configuring Windows 11 for 8 hours, where he made a similar presentation of his system at the beginning.",
+      url: "https://youtu.be/MYKo3KA2u-U"
+    },
+    {
+      id: "mg-2",
+      title: "Gamer interface animation",
+      subtitle: "Systems can look beautiful too",
+      difficulty: "easy",
+      text: "I've long been a fan of system interfaces. So, for me, animating some system component was only a matter of time.",
+      url: "https://youtu.be/3cccfWBxXHg"
+    }
+  ]
+};
+
 // Encapsulated workspace layer that handles its own open/close window animations
 interface WorkspaceLayerProps {
   isActive: boolean;
@@ -91,16 +150,7 @@ const App: React.FC = () => {
     3: null
   });
   
-  const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    // Dynamically fetch the JSON configuration file
-    fetch('./data/videos.json')
-      .then((res) => res.json())
-      .then((data) => setVideoData(data))
-      .catch((err) => console.error('Failed to load video configuration:', err));
-  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -198,7 +248,7 @@ const App: React.FC = () => {
               isActive={ws === currentWorkspace}
               activeSection={workspaceSections[ws]}
               onClose={() => setWorkspaceSections(prev => ({ ...prev, [ws]: null }))}
-              videoData={videoData}
+              videoData={staticVideoData}
             />
           ))}
         </div>
