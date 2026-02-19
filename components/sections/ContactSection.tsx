@@ -44,9 +44,9 @@ const ContactSection: React.FC = () => {
       </div>
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 lg:gap-24 mb-16">
-        <SocialCard name="Telegram" url="#" delay={100} imgSrc={telegramQr} />
-        <SocialCard name="X / Twitter" url="#" delay={200} imgSrc={twitterQr} />
-        <SocialCard name="Instagram" url="#" delay={300} imgSrc={instagramQr} />
+        <SocialCard name="Telegram" url="https://t.me/fareeditor" delay={100} imgSrc={telegramQr} />
+        <SocialCard name="X (Twitter)" url="https://x.com/FareEditor" delay={200} imgSrc={twitterQr} />
+        <SocialCard name="Instagram" url="https://www.instagram.com/fareeditor/" delay={300} imgSrc={instagramQr} />
       </div>
 
       <a 
