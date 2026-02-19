@@ -1,0 +1,210 @@
+import React, { useState, useEffect } from 'react';
+import TopPanel from './components/TopPanel';
+import Navigation from './components/Navigation';
+import WindowContainer from './components/WindowContainer';
+import AboutSection from './components/sections/AboutSection';
+import VideoShowcase from './components/sections/VideoShowcase';
+import VerticalShowcase from './components/sections/VerticalShowcase';
+import ContactSection from './components/sections/ContactSection';
+import TerminalSection from './components/sections/TerminalSection';
+import { DesktopIcon } from './components/Icons';
+import { SectionType, VideoData } from './types';
+
+// Encapsulated workspace layer that handles its own open/close window animations
+interface WorkspaceLayerProps {
+  isActive: boolean;
+  activeSection: SectionType | null;
+  onClose: () => void;
+  videoData: VideoData | null;
+}
+
+const WorkspaceLayer: React.FC<WorkspaceLayerProps> = ({ isActive, activeSection, onClose, videoData }) => {
+  const [renderedSection, setRenderedSection] = useState<SectionType | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  // Handle window transition animations specific to this workspace
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    if (activeSection === renderedSection) {
+      return; // State is synced, do nothing
+    }
+
+    if (renderedSection !== null) {
+      // Trigger the closing animation first
+      setIsClosing(true);
+      timeoutId = setTimeout(() => {
+        setRenderedSection(activeSection);
+        setIsClosing(false);
+      }, 300); // Wait for 300ms (matches CSS animation duration)
+    } else {
+      // Simply render the new one immediately
+      setRenderedSection(activeSection);
+      setIsClosing(false);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [activeSection, renderedSection]);
+
+  const renderContent = (section: SectionType | null) => {
+    switch (section) {
+      case 'About Me':
+        return <AboutSection key="about" />;
+      case 'Full-Length Videos':
+        return videoData ? <VideoShowcase key="fl" videos={videoData.fullLength} /> : <div className="p-8 text-slate-400 font-mono text-sm animate-pulse">Loading configuration...</div>;
+      case 'Vertical Videos':
+        return videoData ? <VerticalShowcase key="v" videos={videoData.vertical} /> : <div className="p-8 text-slate-400 font-mono text-sm animate-pulse">Loading configuration...</div>;
+      case 'Motion Graphics':
+        return videoData ? <VideoShowcase key="mg" videos={videoData.motionGraphics} /> : <div className="p-8 text-slate-400 font-mono text-sm animate-pulse">Loading configuration...</div>;
+      case 'Contact Me':
+        return <ContactSection key="contact" />;
+      case 'Terminal':
+        return <TerminalSection key="terminal" />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div 
+      className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center transition-opacity duration-300 ease-in-out ${isActive ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}
+    >
+      {renderedSection && (
+        <WindowContainer 
+          title={renderedSection === 'Terminal' ? 'Konsole' : renderedSection} 
+          onClose={onClose}
+          isClosing={isClosing}
+        >
+          {renderContent(renderedSection)}
+        </WindowContainer>
+      )}
+    </div>
+  );
+};
+
+const App: React.FC = () => {
+  // State for Workspaces
+  const [currentWorkspace, setCurrentWorkspace] = useState<number>(1);
+  const [workspaceSections, setWorkspaceSections] = useState<Record<number, SectionType | null>>({
+    1: null,
+    2: null,
+    3: null
+  });
+  
+  const [videoData, setVideoData] = useState<VideoData | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Dynamically fetch the JSON configuration file
+    fetch('./data/videos.json')
+      .then((res) => res.json())
+      .then((data) => setVideoData(data))
+      .catch((err) => console.error('Failed to load video configuration:', err));
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const ua = navigator.userAgent;
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+      const isNarrowScreen = window.innerWidth <= 768;
+      
+      setIsMobile(isMobileUA || isNarrowScreen);
+    };
+
+    // Check immediately on mount
+    checkMobile();
+    
+    // Add event listener to re-evaluate on resize
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleSectionChange = (section: SectionType | null) => {
+    setWorkspaceSections(prev => ({ ...prev, [currentWorkspace]: section }));
+  };
+
+  const handleOpenTerminal = () => {
+    setWorkspaceSections(prev => ({ ...prev, [currentWorkspace]: 'Terminal' }));
+  };
+
+  // Prevent rendering anything until the mobile check completes to avoid flashes
+  if (isMobile === null) return null;
+
+  // Fallback view for mobile devices
+  if (isMobile) {
+    return (
+      <div className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center font-text text-slate-200 p-6 text-center z-50">
+        {/* Hemisphere and Backlight Background */}
+        <div className="absolute inset-0 bg-bgMain -z-20 overflow-hidden">
+          <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 w-[150vw] h-[50vh] bg-accent1 blur-[100px] opacity-40 rounded-full mix-blend-screen -z-10 pointer-events-none"></div>
+          <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[80%] w-[250vw] aspect-square rounded-full bg-[#02050A] border-t-[1.5px] border-accent1/50 shadow-[inset_0_4px_30px_rgba(0,168,255,0.2)] -z-10 pointer-events-none"></div>
+        </div>
+
+        <div className="bg-windowBg/80 backdrop-blur-xl border border-white/10 p-8 pt-10 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] max-w-sm w-full flex flex-col items-center animate-slide-up relative overflow-hidden">
+          
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent1 to-transparent opacity-50"></div>
+          
+          <div className="w-20 h-20 bg-accent1/10 rounded-full flex items-center justify-center mb-6 border border-accent1/20 shadow-[0_0_30px_rgba(0,168,255,0.2)]">
+            <DesktopIcon className="w-10 h-10 text-accent1 animate-pulse" />
+          </div>
+          
+          <h1 className="text-2xl font-heading font-bold text-white mb-2">Mobile Adaptation</h1>
+          <h2 className="text-xs font-subheading text-accent1 mb-6 uppercase tracking-widest bg-accent1/10 px-3 py-1 rounded-full border border-accent1/20">Under Development</h2>
+          
+          <p className="text-slate-400 text-sm leading-relaxed mb-8 font-text">
+            FareOS is a highly customized tiling window manager experience specifically optimized for desktop environments. 
+            <br/><br/>
+            Please visit this portfolio from a PC to explore the full layout seamlessly.
+          </p>
+          
+          <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-accent2 to-accent1 w-1/3 rounded-full animate-[fadeOutline_2s_ease-in-out_infinite]"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Standard Desktop App Render
+  return (
+    <div className="relative w-full h-screen overflow-hidden flex flex-col font-text text-slate-200">
+      
+      {/* Hemisphere and Backlight Background */}
+      <div className="absolute inset-0 bg-bgMain -z-20 overflow-hidden">
+        {/* Huge Backlight / Aura */}
+        <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 w-[120vw] md:w-[80vw] h-[60vh] bg-accent1 blur-[120px] opacity-40 rounded-full mix-blend-screen -z-10 pointer-events-none"></div>
+        
+        {/* Hemisphere / Dark Planet */}
+        <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[80%] w-[200vw] md:w-[150vw] lg:w-[120vw] aspect-square rounded-full bg-[#02050A] border-t-[1.5px] border-accent1/50 shadow-[inset_0_4px_30px_rgba(0,168,255,0.2)] -z-10 pointer-events-none"></div>
+      </div>
+
+      <TopPanel 
+        activeWorkspace={currentWorkspace} 
+        onWorkspaceChange={setCurrentWorkspace} 
+        onOpenTerminal={handleOpenTerminal} 
+      />
+      
+      <div className="flex-1 w-full max-w-[1600px] mx-auto flex flex-col p-4 md:p-6 lg:p-8 relative z-10 h-[calc(100vh-2rem)]">
+        <Navigation 
+          activeSection={workspaceSections[currentWorkspace]} 
+          onSectionChange={handleSectionChange} 
+        />
+        
+        {/* Window Area with Workspace Layers */}
+        <div className="flex-1 w-full flex flex-col items-center justify-center min-h-0 relative pb-4">
+          {[1, 2, 3].map(ws => (
+            <WorkspaceLayer
+              key={ws}
+              isActive={ws === currentWorkspace}
+              activeSection={workspaceSections[ws]}
+              onClose={() => setWorkspaceSections(prev => ({ ...prev, [ws]: null }))}
+              videoData={videoData}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;
