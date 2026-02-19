@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
       // КРИТИЧНО ДЛЯ GITHUB PAGES:
       // Если твой сайт доступен по адресу https://username.github.io/my-repo/
       // то base должен быть '/my-repo/'
-      base: '/fare-portfolio/', 
+      base: '/', 
 
       server: {
         port: 3000,
