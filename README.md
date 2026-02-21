@@ -69,6 +69,6 @@ To run this project locally on your machine, follow these steps:
 
 ## 📄 License
 
-This project is open-source and available under the [MIT License](LICENSE). 
+This project is open-source and available under the [CC-BY-4.0 License](LICENSE). 
 
 *Note: The personal branding, video content, images, and text copy belong to Fare (Eugene) and are fully copyrighted. Feel free to fork the code, but please replace the personal data and videos with your own.*
