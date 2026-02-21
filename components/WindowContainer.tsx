@@ -50,7 +50,7 @@ const WindowContainer: React.FC<WindowContainerProps> = ({ children, title, onCl
       } else if (isResizing) {
         const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
         const deltaY = clientY - dragStart.current.mouseY;
-        const newHeight = Math.max(400, dragStart.current.height + deltaY); // Min height 400px
+        const newHeight = Math.max(40, dragStart.current.height + deltaY); // Min height 40px (header height)
         setHeight(newHeight);
       }
     };

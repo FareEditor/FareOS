@@ -130,7 +130,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
           return (
             <div 
               key={pageIndex} 
-              className={`absolute inset-0 w-full h-full flex flex-row items-center justify-center gap-4 md:gap-8 pt-20 pointer-events-none ${isActive ? 'z-10' : 'z-0'}`}
+              className={`absolute inset-0 w-full h-full flex flex-row items-center justify-center gap-4 md:gap-8 pt-10 pointer-events-none ${isActive ? 'z-10' : 'z-0'}`}
             >
               {page.map((video) => {
                 // Determine transform based on page state
@@ -143,7 +143,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
                 return (
                   <div 
                     key={video.id} 
-                    className={`relative flex flex-col group transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] flex-shrink-0 h-[75%] aspect-[9/16] ${transitionClass}`}
+                    className={`relative flex flex-col group transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] flex-shrink-0 h-[70%] aspect-[9/16] ${transitionClass}`}
                   >
                     <div className="w-full h-full rounded-2xl overflow-hidden bg-black/50 border border-white/10 shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(54,0,120,0.5)] group-hover:border-accent2/50 relative z-10">
                       <iframe
@@ -174,9 +174,9 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
                       )}
                     </div>
                     
-                    <div className="mt-4 px-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                      <h4 className="font-heading text-white text-base md:text-lg truncate mb-1">{video.title}</h4>
-                      <p className="font-text text-xs md:text-sm text-slate-400 line-clamp-2">{video.text}</p>
+                    <div className="absolute top-full left-0 w-full mt-4 px-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                      <h4 className="font-heading text-white text-sm md:text-base truncate mb-1">{video.title}</h4>
+                      <p className="font-text text-[10px] md:text-xs text-slate-400 line-clamp-2">{video.text}</p>
                     </div>
                   </div>
                 );
