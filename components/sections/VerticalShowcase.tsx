@@ -116,7 +116,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
           <span className="w-1.5 h-6 bg-accent2 rounded-full inline-block shadow-[0_0_10px_rgba(54,0,120,0.8)]"></span>
           Short-form Content
         </h3>
-        <span className="font-mono text-[10px] text-slate-500/70 tracking-widest uppercase hidden sm:block pr-16 md:pr-24 text-right">
+        <span className="font-mono text-[10px] text-slate-500/70 tracking-widest uppercase hidden sm:block text-right">
           © Fare 2026. All rights reserved.
         </span>
       </div>
@@ -130,7 +130,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
           return (
             <div 
               key={pageIndex} 
-              className={`absolute inset-0 w-full h-full flex flex-row items-center justify-center gap-4 md:gap-8 p-4 pt-20 lg:pr-28 pointer-events-none ${isActive ? 'z-10' : 'z-0'}`}
+              className={`absolute inset-0 w-full h-full flex flex-row items-center justify-center gap-4 md:gap-8 pt-20 pointer-events-none ${isActive ? 'z-10' : 'z-0'}`}
             >
               {page.map((video) => {
                 // Determine transform based on page state
@@ -143,10 +143,9 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
                 return (
                   <div 
                     key={video.id} 
-                    className={`relative flex flex-col group transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] flex-shrink-0 ${transitionClass}`}
-                    style={{ width: 'calc(min(60vh, 500px) * 9 / 16)' }}
+                    className={`relative flex flex-col group transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] flex-shrink-0 h-[75%] aspect-[9/16] ${transitionClass}`}
                   >
-                    <div className="h-[60vh] max-h-[500px] w-full rounded-2xl overflow-hidden bg-black/50 border border-white/10 shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(54,0,120,0.5)] group-hover:border-accent2/50 relative z-10">
+                    <div className="w-full h-full rounded-2xl overflow-hidden bg-black/50 border border-white/10 shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(54,0,120,0.5)] group-hover:border-accent2/50 relative z-10">
                       <iframe
                         ref={(el) => { iframeRefs.current[video.id] = el; }}
                         src={getEmbedUrl(video.url)}

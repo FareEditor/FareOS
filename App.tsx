@@ -44,9 +44,9 @@ const staticVideoData: VideoData = {
     },
     {
       id: "v-3",
-      title: "Movies for Bartenders",
-      text: "Beautiful storytelling enhanced by visuals",
-      url: "https://youtu.be/JA7JQKE6um0?list=TLGG4Zb8KNsSKaEyMDAyMjAyNg"
+      title: "Podcasts are almighty",
+      text: "Medical concerns in simple terms.",
+      url: "https://youtu.be/Iob_g3vITyI"
     }
   ],
   motionGraphics: [
@@ -133,6 +133,8 @@ const WorkspaceLayer: React.FC<WorkspaceLayerProps> = ({ isActive, activeSection
           title={renderedSection === 'Terminal' ? 'Konsole' : renderedSection} 
           onClose={onClose}
           isClosing={isClosing}
+          resizable={renderedSection === 'Vertical Videos'}
+          initialHeight={renderedSection === 'Vertical Videos' ? '80vh' : '65vh'}
         >
           {renderContent(renderedSection)}
         </WindowContainer>
@@ -241,7 +243,7 @@ const App: React.FC = () => {
         />
         
         {/* Window Area with Workspace Layers */}
-        <div className="flex-1 w-full flex flex-col items-center justify-center min-h-0 relative pb-4">
+        <div className="flex-1 w-full flex flex-col items-center justify-center min-h-0 relative pb-4 z-[45]">
           {[1, 2, 3].map(ws => (
             <WorkspaceLayer
               key={ws}

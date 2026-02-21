@@ -5,48 +5,62 @@ interface WindowContainerProps {
   title: string;
   onClose: () => void;
   isClosing?: boolean;
+  resizable?: boolean;
+  initialHeight?: string;
 }
 
-const WindowContainer: React.FC<WindowContainerProps> = ({ children, title, onClose, isClosing = false }) => {
+const WindowContainer: React.FC<WindowContainerProps> = ({ children, title, onClose, isClosing = false, resizable = false, initialHeight = '65vh' }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [height, setHeight] = useState<string | number>(initialHeight);
+  const [isResizing, setIsResizing] = useState(false);
   
   // Track initial mouse/touch positions and window offset
-  const dragStart = useRef({ mouseX: 0, mouseY: 0, windowX: 0, windowY: 0 });
+  const dragStart = useRef({ mouseX: 0, mouseY: 0, windowX: 0, windowY: 0, height: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle position resetting cleanly before the browser paints
   useLayoutEffect(() => {
     if (isClosing) {
       // If it starts closing, just cancel dragging but keep it exactly where it was dragged
       setIsDragging(false);
+      setIsResizing(false);
     } else {
       // Once it finishes closing and re-opens (or initially mounts), abruptly center it
       setPosition({ x: 0, y: 0 });
       setIsDragging(false);
+      setIsResizing(false);
+      setHeight(initialHeight);
     }
-  }, [title, isClosing]);
+  }, [title, isClosing, initialHeight]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent | TouchEvent) => {
-      if (!isDragging) return;
-      
-      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-
-      const deltaX = clientX - dragStart.current.mouseX;
-      const deltaY = clientY - dragStart.current.mouseY;
-
-      setPosition({
-        x: dragStart.current.windowX + deltaX,
-        y: dragStart.current.windowY + deltaY,
-      });
+      if (isDragging) {
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+  
+        const deltaX = clientX - dragStart.current.mouseX;
+        const deltaY = clientY - dragStart.current.mouseY;
+  
+        setPosition({
+          x: dragStart.current.windowX + deltaX,
+          y: dragStart.current.windowY + deltaY,
+        });
+      } else if (isResizing) {
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        const deltaY = clientY - dragStart.current.mouseY;
+        const newHeight = Math.max(400, dragStart.current.height + deltaY); // Min height 400px
+        setHeight(newHeight);
+      }
     };
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      setIsResizing(false);
     };
 
-    if (isDragging) {
+    if (isDragging || isResizing) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
       window.addEventListener('touchmove', handleMouseMove, { passive: false });
@@ -59,7 +73,7 @@ const WindowContainer: React.FC<WindowContainerProps> = ({ children, title, onCl
       window.removeEventListener('touchmove', handleMouseMove);
       window.removeEventListener('touchend', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, isResizing]);
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     // Prevent dragging if interacting with the window control buttons
@@ -72,6 +86,7 @@ const WindowContainer: React.FC<WindowContainerProps> = ({ children, title, onCl
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
 
     dragStart.current = {
+      ...dragStart.current,
       mouseX: clientX,
       mouseY: clientY,
       windowX: position.x,
@@ -79,14 +94,30 @@ const WindowContainer: React.FC<WindowContainerProps> = ({ children, title, onCl
     };
   };
 
+  const handleResizeStart = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    setIsResizing(true);
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    dragStart.current = {
+      ...dragStart.current,
+      mouseY: clientY,
+      height: containerRef.current?.offsetHeight || 0,
+    };
+  };
+
   return (
-    <div className={`w-full max-w-7xl mx-auto h-[65vh] ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}>
+    <div 
+      ref={containerRef}
+      className={`w-full max-w-7xl mx-auto ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}
+      style={{ height: typeof height === 'number' ? `${height}px` : height }}
+    >
       <div 
-        className={`w-full h-full flex flex-col bg-windowBg backdrop-blur-xl border border-white/10 rounded-xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] overflow-hidden ring-1 ring-white/5 will-change-transform ${isDragging ? 'shadow-[0_30px_80px_-10px_rgba(0,0,0,0.8)]' : ''}`}
+        className={`w-full h-full flex flex-col bg-windowBg backdrop-blur-xl border border-white/10 rounded-xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] overflow-hidden ring-1 ring-white/5 will-change-transform ${isDragging ? 'shadow-[0_30px_80px_-10px_rgba(0,0,0,0.8)]' : ''} ${(isDragging || isResizing) ? 'select-none' : ''}`}
         style={{ 
           transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
           // Removed 'transform' from transition to prevent gliding when resetting position
-          transition: isDragging ? 'none' : 'box-shadow 0.2s ease-in-out'
+          transition: (isDragging || isResizing) ? 'none' : 'box-shadow 0.2s ease-in-out'
         }}
       >
         {/* Window Title Bar - Drag Handle */}
@@ -114,9 +145,20 @@ const WindowContainer: React.FC<WindowContainerProps> = ({ children, title, onCl
         </div>
         
         {/* Window Content */}
-        <div className="flex-1 overflow-hidden relative p-6">
+        <div className={`flex-1 overflow-hidden relative p-6 ${(isDragging || isResizing) ? 'pointer-events-none select-none' : ''}`}>
           {children}
         </div>
+
+        {/* Resize Handle */}
+        {resizable && (
+          <div 
+            className="h-4 w-full absolute bottom-0 left-0 cursor-s-resize flex items-center justify-center group hover:bg-white/5 transition-colors z-50"
+            onMouseDown={handleResizeStart}
+            onTouchStart={handleResizeStart}
+          >
+            <div className="w-12 h-1 bg-white/10 rounded-full group-hover:bg-white/30 transition-colors"></div>
+          </div>
+        )}
       </div>
     </div>
   );
