@@ -55,7 +55,7 @@ const staticVideoData: VideoData = {
       subtitle: "But at least it's not boring to watch.",
       difficulty: "medium",
       text: "The idea for this animation came from Max.Mov's video of configuring Windows 11 for 8 hours, where he made a similar presentation of his system at the beginning.",
-      url: "https://youtu.be/EsiOZpGpE8E"
+      url: "https://youtu.be/Vu2K-jwWQys"
     },
     {
       id: "mg-2",
