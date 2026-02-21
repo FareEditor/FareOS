@@ -17,7 +17,7 @@
   - Short-form vertical content (TikTok/Reels/Shorts format).
   - Motion graphics and animations.
 - ⌨️ **Terminal Easter Egg:** A hidden, functional-looking terminal running a mock `fastfetch` on Arch Linux.
-- 📱 **Mobile Fallback:** A dedicated, polished mobile view informing users to visit on a desktop for the full OS experience.
+- 📱 **Mobile Support:** A fully adapted, responsive mobile experience with touch-optimized navigation, swipe gestures for video showcases, and a native-app feel.
 
 ## 🛠 Tech Stack
 
@@ -40,7 +40,7 @@ To run this project locally on your machine, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/FareEditor/FareOS.git
+   git clone https://github.com/your-username/fare-portfolio.git
    cd fare-portfolio
    ```
 
@@ -57,7 +57,7 @@ To run this project locally on your machine, follow these steps:
    # or
    yarn dev
    ```
-   *The application will typically be available at `http://localhost:3000`.*
+   *The application will typically be available at `http://localhost:5173`.*
 
 4. **Build for production:**
    ```bash
@@ -69,6 +69,6 @@ To run this project locally on your machine, follow these steps:
 
 ## 📄 License
 
-This project is open-source and available under the [CC-BY-4.0 License](LICENSE). 
+This project is open-source and available under the [MIT License](LICENSE). 
 
 *Note: The personal branding, video content, images, and text copy belong to Fare (Eugene) and are fully copyrighted. Feel free to fork the code, but please replace the personal data and videos with your own.*
