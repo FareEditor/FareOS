@@ -1,6 +1,6 @@
 import React from 'react';
 
-const avatarImg = new URL('./pic/logo.jpg', import.meta.url).href;
+const avatarImg = new URL('./pic/logo.png', import.meta.url).href;
 
 const AboutSection: React.FC = () => {
   return (
