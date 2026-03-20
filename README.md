@@ -17,7 +17,7 @@
   - Short-form vertical content (TikTok/Reels/Shorts format).
   - Motion graphics and animations.
 - ⌨️ **Terminal Easter Egg:** A hidden, functional-looking terminal running a mock `fastfetch` on Arch Linux.
-- 📱 **Mobile Support:** A fully adapted, responsive mobile experience with touch-optimized navigation, swipe gestures for video showcases, and a native-app feel.
+- 📱 **Mobile Fallback:** A dedicated, polished mobile view informing users to visit on a desktop for the full OS experience.
 
 ## 🛠 Tech Stack
 

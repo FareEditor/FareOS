@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TopPanel from './components/TopPanel';
 import Navigation from './components/Navigation';
 import WindowContainer from './components/WindowContainer';
+import MobileFallback from './components/MobileFallback';
 import AboutSection from './components/sections/AboutSection';
 import VideoShowcase from './components/sections/VideoShowcase';
 import VerticalShowcase from './components/sections/VerticalShowcase';
@@ -73,10 +74,11 @@ interface WorkspaceLayerProps {
   isActive: boolean;
   activeSection: SectionType | null;
   onClose: () => void;
+  onSectionChange: (section: SectionType | null) => void;
   videoData: VideoData | null;
 }
 
-const WorkspaceLayer: React.FC<WorkspaceLayerProps> = ({ isActive, activeSection, onClose, videoData }) => {
+const WorkspaceLayer: React.FC<WorkspaceLayerProps> = ({ isActive, activeSection, onClose, onSectionChange, videoData }) => {
   const [renderedSection, setRenderedSection] = useState<SectionType | null>(null);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -107,7 +109,7 @@ const WorkspaceLayer: React.FC<WorkspaceLayerProps> = ({ isActive, activeSection
   const renderContent = (section: SectionType | null) => {
     switch (section) {
       case 'About Me':
-        return <AboutSection key="about" />;
+        return <AboutSection key="about" onContactClick={() => onSectionChange('Contact Me')} />;
       case 'Full-Length Videos':
         return videoData ? <VideoShowcase key="fl" videos={videoData.fullLength} /> : <div className="p-8 text-slate-400 font-mono text-sm animate-pulse">Loading configuration...</div>;
       case 'Vertical Videos':
@@ -150,6 +152,16 @@ const App: React.FC = () => {
     2: null,
     3: null
   });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSectionChange = (section: SectionType | null) => {
     setWorkspaceSections(prev => ({ ...prev, [currentWorkspace]: section }));
@@ -159,39 +171,18 @@ const App: React.FC = () => {
     setWorkspaceSections(prev => ({ ...prev, [currentWorkspace]: 'Terminal' }));
   };
 
-  // Mobile Back Button Handler
-  const prevActiveSection = React.useRef<SectionType | null>(null);
-
+  // Auto-open About Me section on load
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    if (!isMobile) return;
-
-    const activeSection = workspaceSections[currentWorkspace];
-
-    const handlePopState = (event: PopStateEvent) => {
-      // If a section is open, close it
-      if (activeSection) {
-        setWorkspaceSections(prev => ({ ...prev, [currentWorkspace]: null }));
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-
-    // Push state when opening a section
-    if (activeSection && !prevActiveSection.current) {
-      window.history.pushState({ section: activeSection }, '');
-    }
-
-    prevActiveSection.current = activeSection;
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [workspaceSections, currentWorkspace]);
+    const timer = setTimeout(() => {
+      setWorkspaceSections(prev => ({ ...prev, [1]: 'About Me' }));
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Standard Desktop App Render
   return (
     <div className="relative w-full h-screen overflow-hidden flex flex-col font-text text-slate-200">
+      {isMobile && <MobileFallback />}
       
       {/* Hemisphere and Backlight Background */}
       <div className="absolute inset-0 bg-bgMain -z-20 overflow-hidden">
@@ -222,6 +213,7 @@ const App: React.FC = () => {
               isActive={ws === currentWorkspace}
               activeSection={workspaceSections[ws]}
               onClose={() => setWorkspaceSections(prev => ({ ...prev, [ws]: null }))}
+              onSectionChange={handleSectionChange}
               videoData={staticVideoData}
             />
           ))}

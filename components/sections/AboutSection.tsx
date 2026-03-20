@@ -2,7 +2,11 @@ import React from 'react';
 
 const avatarImg = new URL('./pic/logo.png', import.meta.url).href;
 
-const AboutSection: React.FC = () => {
+interface AboutSectionProps {
+  onContactClick?: () => void;
+}
+
+const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) => {
   return (
     <div className="relative w-full h-full flex flex-col md:flex-row items-center justify-start md:justify-center gap-6 md:gap-12 p-0 md:p-4 overflow-y-auto md:overflow-hidden animate-fade-in pb-12 md:pb-4 scrollbar-hide">
       {/* Copyright */}
@@ -41,10 +45,13 @@ const AboutSection: React.FC = () => {
         </div>
 
         <div className="mt-8 flex gap-4">
-          <div className="flex items-center gap-2 font-mono text-xs text-accent1 bg-accent1/10 px-3 py-1.5 rounded border border-accent1/20">
+          <button 
+            onClick={onContactClick}
+            className="flex items-center gap-2 font-mono text-xs text-accent1 bg-accent1/10 px-3 py-1.5 rounded border border-accent1/20 hover:bg-accent1/20 transition-colors cursor-pointer"
+          >
             <span className="w-2 h-2 rounded-full bg-accent1 animate-pulse"></span>
             AVAILABLE FOR WORK
-          </div>
+          </button>
         </div>
       </div>
     </div>
