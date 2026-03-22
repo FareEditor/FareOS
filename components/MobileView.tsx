@@ -111,12 +111,12 @@ const MobileView: React.FC<MobileViewProps> = ({ videoData }) => {
         {sections.map((section, index) => (
           <div 
             key={section}
-            className={`absolute inset-0 w-full h-full transition-all duration-500 ease-in-out p-4 flex flex-col justify-center ${
+            className={`absolute inset-0 w-full h-full transition-all duration-500 ease-in-out p-4 flex flex-col justify-center overflow-visible ${
               index === currentIndex ? 'translate-y-0 opacity-100' : 
               index < currentIndex ? '-translate-y-full opacity-0' : 'translate-y-full opacity-0'
             }`}
           >
-            <div className="w-full h-full flex flex-col pt-8 pb-6">
+            <div className="w-full h-full flex flex-col pt-8 pb-6 overflow-visible">
                {renderContent(section)}
             </div>
           </div>

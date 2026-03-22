@@ -8,7 +8,7 @@ interface AboutSectionProps {
 
 const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) => {
   return (
-    <div className="relative w-full h-full flex flex-col md:flex-row items-center justify-start md:justify-center gap-6 md:gap-12 p-0 md:p-4 overflow-y-auto md:overflow-hidden animate-fade-in pb-12 md:pb-4 scrollbar-hide">
+    <div className="relative w-full h-full flex flex-col md:flex-row items-center justify-start md:justify-center gap-6 md:gap-12 p-0 md:p-4 overflow-y-auto overflow-x-visible md:overflow-hidden animate-fade-in pb-12 md:pb-4 scrollbar-hide">
       {/* Copyright */}
       <div className="absolute top-0 right-0 p-6 z-20 pointer-events-none">
         <span className="font-mono text-[10px] text-slate-500/70 tracking-widest uppercase hidden sm:block text-right">
@@ -27,11 +27,11 @@ const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) => {
       </div>
 
       {/* Right: Info */}
-      <div className="flex flex-col max-w-lg">
-        <h2 className="text-4xl md:text-5xl font-heading text-white mb-2 tracking-tight">
+      <div className="flex flex-col max-w-lg overflow-visible">
+        <h2 className="text-5xl font-heading text-white mb-2 tracking-tight">
           I'm <span className="text-accent1 drop-shadow-[0_0_10px_rgba(0,112,187,0.5)]">Eugene</span>
         </h2>
-        <h3 className="text-xl md:text-2xl font-subheading text-slate-300 mb-6 font-medium">
+        <h3 className="text-2xl font-subheading text-slate-300 mb-6 font-medium">
           Professional Video Editor & Motion Designer
         </h3>
         
@@ -39,19 +39,21 @@ const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) => {
           <p className="text-slate-300 leading-relaxed font-text text-lg">
             Video is a reflection of the author's soul. If the viewer doesn't feel you when watching your video, it means the editor didn't do a good job of creating quality. I'm here to correct this misunderstanding.
           </p>
-          <p className="text-slate-400 mt-4 leading-relaxed font-text">
+          <p className="text-slate-400 mt-4 leading-relaxed font-text text-base">
             For me, video isn't just a shell that shows something. Three years of professional editing experience have taught me: every video is a piece of my soul, including yours as the editor. And I put my whole soul into each video, so the viewer will hold their breath.
           </p>
         </div>
 
-        <div className="mt-8 flex gap-4">
-          <button 
-            onClick={onContactClick}
-            className="flex items-center gap-2 font-mono text-xs text-accent1 bg-accent1/10 px-3 py-1.5 rounded border border-accent1/20 hover:bg-accent1/20 transition-colors cursor-pointer"
-          >
-            <span className="w-2 h-2 rounded-full bg-accent1 animate-pulse"></span>
-            AVAILABLE FOR WORK
-          </button>
+        <div className="mt-8 flex gap-4 justify-center md:justify-start">
+          <div className="p-6 -m-6 overflow-visible">
+            <button 
+              onClick={onContactClick}
+              className="flex items-center gap-2 font-mono text-xs text-accent1 bg-accent1/20 px-3 py-1.5 rounded border border-accent1/40 hover:bg-accent1/30 transition-all cursor-pointer animate-blink animate-glow shadow-[0_0_15px_rgba(0,168,255,0.3)]"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-accent1 animate-pulse shadow-[0_0_8px_rgba(0,168,255,0.8)]"></span>
+              AVAILABLE FOR WORK
+            </button>
+          </div>
         </div>
       </div>
     </div>

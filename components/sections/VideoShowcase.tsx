@@ -17,6 +17,7 @@ const images: Record<string, string> = {
 
 interface VideoShowcaseProps {
   videos: VideoItem[];
+  isMobileView?: boolean;
 }
 
 const DifficultyBadge = ({ level }: { level?: Difficulty }) => {
@@ -35,24 +36,14 @@ const DifficultyBadge = ({ level }: { level?: Difficulty }) => {
   );
 };
 
-const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
+const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos, isMobileView }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartY = useRef(0);
   const touchStartX = useRef(0);
   const iframeRefs = useRef<Record<string, HTMLIFrameElement | null>>({});
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const pauseCurrentVideo = () => {
     if (playingVideo) {
@@ -91,7 +82,7 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
 
   // Handle mouse wheel scrolling for seamless navigation
   const handleWheel = (e: React.WheelEvent) => {
-    if (isScrolling) return;
+    if (isScrolling || isMobileView) return;
 
     if (e.deltaY > 50 && currentIndex < videos.length - 1) {
       setIsScrolling(true);
@@ -104,7 +95,7 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
     }
   };
 
-  // Handle touch swipes for mobile users
+  // Handle touch swipes
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
     touchStartX.current = e.touches[0].clientX;
@@ -119,16 +110,14 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
     const deltaY = touchStartY.current - touchEndY;
     const deltaX = touchStartX.current - touchEndX;
 
-    if (isMobile) {
+    if (isMobileView) {
       // Horizontal swipe for mobile
-      if (Math.abs(deltaX) > 50) { // Threshold
+      if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
         if (deltaX > 0 && currentIndex < videos.length - 1) {
-          // Swipe Left -> Next
           setIsScrolling(true);
           nextVideo();
           timeoutRef.current = setTimeout(() => setIsScrolling(false), 800);
         } else if (deltaX < 0 && currentIndex > 0) {
-          // Swipe Right -> Prev
           setIsScrolling(true);
           prevVideo();
           timeoutRef.current = setTimeout(() => setIsScrolling(false), 800);
@@ -141,7 +130,7 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
           setIsScrolling(true);
           nextVideo();
           timeoutRef.current = setTimeout(() => setIsScrolling(false), 800);
-        } else if (deltaY < 0 && currentIndex > 0) {
+        } else if (deltaY < -50 && currentIndex > 0) {
           setIsScrolling(true);
           prevVideo();
           timeoutRef.current = setTimeout(() => setIsScrolling(false), 800);
@@ -174,19 +163,19 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
       {videos.map((video, index) => {
         const isActive = index === currentIndex;
         
-        // Determine transition based on device type
+        // Determine transition
         let transitionClass = '';
         
         if (isActive) {
           transitionClass = 'opacity-100 translate-y-0 translate-x-0 scale-100 z-10 pointer-events-auto delay-100';
         } else if (index < currentIndex) {
           // Previous items
-          transitionClass = isMobile 
+          transitionClass = isMobileView 
             ? 'opacity-0 -translate-x-16 scale-95 z-0 pointer-events-none' 
             : 'opacity-0 -translate-y-16 scale-95 z-0 pointer-events-none';
         } else {
           // Next items
-          transitionClass = isMobile
+          transitionClass = isMobileView
             ? 'opacity-0 translate-x-16 scale-95 z-0 pointer-events-none'
             : 'opacity-0 translate-y-16 scale-95 z-0 pointer-events-none';
         }
@@ -197,7 +186,7 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
             className={`absolute inset-0 w-full h-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 p-4 lg:pr-24 transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] ${transitionClass}`}
           >
             {/* Left: Video Embed */}
-            <div className="w-full max-w-2xl lg:w-3/5 aspect-video rounded-xl overflow-hidden bg-black/50 border border-white/10 shadow-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,112,187,0.4)] hover:border-accent1/50 group shrink-0 relative">
+            <div className={`w-full max-w-2xl lg:w-3/5 aspect-video rounded-xl overflow-hidden bg-black/50 border border-white/10 shadow-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,112,187,0.4)] hover:border-accent1/50 group shrink-0 relative ${isMobileView ? 'max-h-[30vh]' : ''}`}>
               <iframe
                 ref={(el) => { iframeRefs.current[video.id] = el; }}
                 src={getEmbedUrl(video.url)}
@@ -227,19 +216,28 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
             </div>
 
             {/* Right: Info */}
-            <div className="w-full lg:w-2/5 flex flex-col items-start pb-12 lg:pb-0">
-              <div className="flex items-center gap-3 mb-3">
+            <div className={`w-full lg:w-2/5 flex flex-col items-start pb-20 lg:pb-0 ${isMobileView ? 'items-center text-center' : ''}`}>
+              <div className={`flex items-center gap-3 mb-3 ${isMobileView ? '' : ''}`}>
                 <h3 className="text-2xl lg:text-3xl font-heading text-white">{video.title}</h3>
-                {video.difficulty && <DifficultyBadge level={video.difficulty} />}
+                {!isMobileView && video.difficulty && <DifficultyBadge level={video.difficulty} />}
               </div>
               
-              {video.subtitle && (
-                <h4 className="text-lg font-subheading text-accent1 mb-4 border-b border-accent1/30 pb-2 w-full">
-                  {video.subtitle}
-                </h4>
+              {(video.subtitle || (isMobileView && video.difficulty)) && (
+                <div className={`w-full mb-4 border-b border-accent1/30 pb-2 flex flex-col ${isMobileView ? 'items-center' : ''}`}>
+                  {video.subtitle && (
+                    <h4 className={`text-lg font-subheading text-accent1 ${isMobileView ? 'text-center' : ''}`}>
+                      {video.subtitle}
+                    </h4>
+                  )}
+                  {isMobileView && video.difficulty && (
+                    <div className={video.subtitle ? "mt-2" : ""}>
+                      <DifficultyBadge level={video.difficulty} />
+                    </div>
+                  )}
+                </div>
               )}
               
-              <p className="text-slate-300 font-text leading-relaxed">
+              <p className={`text-slate-300 font-text leading-relaxed ${isMobileView ? 'text-s text-justify' : ''}`}>
                 {video.text}
               </p>
             </div>
@@ -250,27 +248,20 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
       {/* Navigation Controls Overlay */}
       {videos.length > 1 && (
         <div 
-          className={`
-            absolute z-20 bg-windowBg/60 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] flex gap-3
-            ${isMobile 
-              ? 'bottom-6 left-1/2 -translate-x-1/2 flex-row items-center' 
-              : 'right-4 md:right-8 top-1/2 -translate-y-1/2 flex-col items-center'
-            }
-          `}
+          className={`absolute z-20 bg-windowBg/60 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] flex gap-3 ${
+            isMobileView ? 'bottom-2 left-1/2 -translate-x-1/2 flex-row' : 'right-4 md:right-8 top-1/2 -translate-y-1/2 flex-col items-center'
+          }`}
         >
           <button
             onClick={prevVideo}
             disabled={currentIndex === 0}
-            className={`
-              p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none
-              ${isMobile ? '-rotate-90' : ''}
-            `}
+            className={`p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none ${isMobileView ? '-rotate-90' : ''}`}
             title="Previous Video"
           >
             <ChevronUpIcon className="w-5 h-5" />
           </button>
 
-          <div className={`flex gap-3 py-2 ${isMobile ? 'flex-row' : 'flex-col'}`}>
+          <div className={`flex gap-3 py-2 ${isMobileView ? 'flex-row' : 'flex-col'}`}>
             {videos.map((_, i) => (
               <button
                 key={i}
@@ -288,10 +279,7 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
           <button
             onClick={nextVideo}
             disabled={currentIndex === videos.length - 1}
-            className={`
-              p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none
-              ${isMobile ? '-rotate-90' : ''}
-            `}
+            className={`p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none ${isMobileView ? '-rotate-90' : ''}`}
             title="Next Video"
           >
             <ChevronDownIcon className="w-5 h-5" />
@@ -300,6 +288,6 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos }) => {
       )}
     </div>
   );
-};
+};;
 
 export default VideoShowcase;

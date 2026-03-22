@@ -7,26 +7,17 @@ const images = import.meta.glob('./pic/*.png', { eager: true, query: '?url', imp
 
 interface VerticalShowcaseProps {
   videos: VideoItem[];
+  isMobileView?: boolean;
 }
 
-const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
+const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos, isMobileView }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartY = useRef(0);
   const touchStartX = useRef(0);
   const iframeRefs = useRef<Record<string, HTMLIFrameElement | null>>({});
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const pauseCurrentVideo = () => {
     if (playingVideo) {
@@ -49,19 +40,12 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
     }
   };
 
-  // Chunk videos into pages based on device
-  const chunkSize = isMobile ? 1 : 3;
+  // Chunk videos into pages
+  const chunkSize = isMobileView ? 1 : 3;
   const pages: VideoItem[][] = [];
   for (let i = 0; i < videos.length; i += chunkSize) {
     pages.push(videos.slice(i, i + chunkSize));
   }
-
-  // Reset page if it goes out of bounds when switching views
-  useEffect(() => {
-    if (currentPage >= pages.length) {
-      setCurrentPage(0);
-    }
-  }, [isMobile, pages.length]);
 
   const nextPage = () => {
     if (currentPage < pages.length - 1) {
@@ -79,7 +63,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
 
   // Handle mouse wheel scrolling for seamless navigation
   const handleWheel = (e: React.WheelEvent) => {
-    if (isScrolling) return;
+    if (isScrolling || isMobileView) return;
 
     if (e.deltaY > 50 && currentPage < pages.length - 1) {
       setIsScrolling(true);
@@ -93,7 +77,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
     }
   };
 
-  // Handle touch swipes for mobile users
+  // Handle touch swipes
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
     touchStartX.current = e.touches[0].clientX;
@@ -108,9 +92,9 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
     const deltaY = touchStartY.current - touchEndY;
     const deltaX = touchStartX.current - touchEndX;
 
-    if (isMobile) {
+    if (isMobileView) {
       // Horizontal swipe for mobile
-      if (Math.abs(deltaX) > 50) {
+      if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
         if (deltaX > 0 && currentPage < pages.length - 1) {
           setIsScrolling(true);
           nextPage();
@@ -167,7 +151,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
           const isActive = pageIndex === currentPage;
           const isPast = pageIndex < currentPage;
 
-          // Determine container transition based on device
+          // Determine container transition
           let containerTransitionClass = '';
           if (isActive) {
             containerTransitionClass = 'z-10';
@@ -181,17 +165,17 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
               className={`absolute inset-0 w-full h-full flex flex-row items-start md:items-center justify-center gap-4 md:gap-8 pt-4 md:pt-10 pointer-events-none ${containerTransitionClass}`}
             >
               {page.map((video) => {
-                // Determine transform based on page state and device
+                // Determine transform based on page state
                 let transitionClass = '';
                 
                 if (isActive) {
                   transitionClass = 'opacity-100 translate-y-0 translate-x-0 scale-100 pointer-events-auto';
                 } else if (isPast) {
-                  transitionClass = isMobile
+                  transitionClass = isMobileView 
                     ? 'opacity-0 -translate-x-24 scale-95 pointer-events-none'
                     : 'opacity-0 -translate-y-24 scale-95 pointer-events-none';
                 } else {
-                  transitionClass = isMobile
+                  transitionClass = isMobileView
                     ? 'opacity-0 translate-x-24 scale-95 pointer-events-none'
                     : 'opacity-0 translate-y-24 scale-95 pointer-events-none';
                 }
@@ -230,9 +214,9 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
                       )}
                     </div>
                     
-                    <div className="absolute top-full left-0 w-full mt-4 px-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                      <h4 className="font-heading text-white text-sm md:text-base truncate mb-1">{video.title}</h4>
-                      <p className="font-text text-[10px] md:text-xs text-slate-400 line-clamp-2">{video.text}</p>
+                    <div className={`absolute top-full left-0 w-full mt-4 px-2 opacity-80 group-hover:opacity-100 transition-opacity ${isMobileView ? 'text-center' : ''}`}>
+                      <h4 className={`font-heading text-white truncate mb-1 ${isMobileView ? 'text-base' : 'text-sm md:text-base'}`}>{video.title}</h4>
+                      <p className={`font-text text-slate-400 line-clamp-2 ${isMobileView ? 'text-xs' : 'text-[10px] md:text-xs'}`}>{video.text}</p>
                     </div>
                   </div>
                 );
@@ -245,27 +229,20 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
       {/* Navigation Controls Overlay */}
       {pages.length > 1 && (
         <div 
-          className={`
-            absolute z-30 bg-windowBg/60 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] flex gap-3
-            ${isMobile 
-              ? 'bottom-6 left-1/2 -translate-x-1/2 flex-row items-center' 
-              : 'right-4 md:right-8 top-1/2 -translate-y-1/2 flex-col items-center'
-            }
-          `}
+          className={`absolute z-30 bg-windowBg/60 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] flex gap-3 ${
+            isMobileView ? 'bottom-2 left-1/2 -translate-x-1/2 flex-row' : 'right-4 md:right-8 top-1/2 -translate-y-1/2 flex-col items-center'
+          }`}
         >
           <button
             onClick={prevPage}
             disabled={currentPage === 0}
-            className={`
-              p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none
-              ${isMobile ? '-rotate-90' : ''}
-            `}
+            className={`p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none ${isMobileView ? '-rotate-90' : ''}`}
             title="Previous Page"
           >
             <ChevronUpIcon className="w-5 h-5" />
           </button>
 
-          <div className={`flex gap-3 py-2 ${isMobile ? 'flex-row' : 'flex-col'}`}>
+          <div className={`flex gap-3 py-2 ${isMobileView ? 'flex-row' : 'flex-col'}`}>
             {pages.map((_, i) => (
               <button
                 key={i}
@@ -283,10 +260,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos }) => {
           <button
             onClick={nextPage}
             disabled={currentPage === pages.length - 1}
-            className={`
-              p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none
-              ${isMobile ? '-rotate-90' : ''}
-            `}
+            className={`p-1.5 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors focus:outline-none ${isMobileView ? '-rotate-90' : ''}`}
             title="Next Page"
           >
             <ChevronDownIcon className="w-5 h-5" />
