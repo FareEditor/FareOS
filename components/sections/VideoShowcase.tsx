@@ -5,18 +5,6 @@ import { ChevronUpIcon, ChevronDownIcon, PlayIcon } from '../Icons';
 import LocalizedText from '../LocalizedText';
 import { useLanguage } from '../../LanguageContext';
 
-import fl1 from './pic/fl-1.png';
-import fl2 from './pic/fl-2.png';
-import mg1 from './pic/mg-1.png';
-import mg2 from './pic/mg-2.png';
-
-const images: Record<string, string> = {
-  'fl-1': fl1,
-  'fl-2': fl2,
-  'mg-1': mg1,
-  'mg-2': mg2,
-};
-
 interface VideoShowcaseProps {
   videos: VideoItem[];
   isMobileView?: boolean;
@@ -212,7 +200,7 @@ const VideoShowcase: React.FC<VideoShowcaseProps> = ({ videos, isMobileView }) =
                   onClick={() => handlePlay(video.id)}
                 >
                   <img 
-                    src={images[video.id] || 'https://picsum.photos/seed/vibrant/1920/1080?blur=4'} 
+                    src={video.thumbnail || 'https://picsum.photos/seed/vibrant/1920/1080?blur=4'} 
                     alt={video.title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
                   />
