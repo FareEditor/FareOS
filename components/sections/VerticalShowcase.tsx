@@ -5,8 +5,6 @@ import { ChevronUpIcon, ChevronDownIcon, PlayIcon } from '../Icons';
 import LocalizedText from '../LocalizedText';
 import { useLanguage } from '../../LanguageContext';
 
-const images = import.meta.glob('./pic/*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-
 interface VerticalShowcaseProps {
   videos: VideoItem[];
   isMobileView?: boolean;
@@ -203,7 +201,7 @@ const VerticalShowcase: React.FC<VerticalShowcaseProps> = ({ videos, isMobileVie
                           onClick={() => handlePlay(video.id)}
                         >
                           <img 
-                            src={images[`./pic/${video.id}.png`] || 'https://picsum.photos/seed/vibrant/1080/1920?blur=4'} 
+                            src={video.thumbnail || 'https://picsum.photos/seed/vibrant/1080/1920?blur=4'} 
                             alt={video.title} 
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
                           />

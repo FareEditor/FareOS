@@ -4,16 +4,13 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
-    
     return {
-      // КРИТИЧНО ДЛЯ GITHUB PAGES:
-      // Если твой сайт доступен по адресу https://username.github.io/my-repo/
-      // то base должен быть '/my-repo/'
-      base: '/', 
-
       server: {
         port: 3000,
         host: '0.0.0.0',
+        fs: {
+          allow: ['..']
+        }
       },
       plugins: [react()],
       define: {
@@ -24,9 +21,6 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      },
-      build: {
-        outDir: 'dist',
       }
     };
 });

@@ -11,6 +11,7 @@ export interface VideoItem {
   text: string;
   textRu?: string;
   url: string;
+  thumbnail?: string;
 }
 
 export interface VideoData {

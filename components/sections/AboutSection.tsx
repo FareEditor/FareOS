@@ -1,8 +1,6 @@
 import React from 'react';
 import LocalizedText from '../LocalizedText';
 
-const avatarImg = new URL('./pic/logo.png', import.meta.url).href;
-
 interface AboutSectionProps {
   onContactClick?: () => void;
 }
@@ -20,7 +18,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) => {
       {/* Left: Avatar */}
       <div className="w-48 h-48 md:w-64 md:h-64 rounded-2xl overflow-hidden border-2 border-accent1/50 shadow-[0_0_30px_rgba(0,112,187,0.3)] shrink-0 relative group mt-8 md:mt-0">
         <img 
-          src={avatarImg} 
+          src="/pic/logo.png" 
           alt="Eugene Avatar" 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
