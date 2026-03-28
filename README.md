@@ -18,6 +18,7 @@
   - Motion graphics and animations.
 - ⌨️ **Terminal Easter Egg:** A hidden, functional-looking terminal running a mock `fastfetch` on Arch Linux.
 - 📱 **Mobile Adaptation:** A dedicated, polished mobile view that adapts the desktop experience into a vertical, swipeable interface for on-the-go browsing.
+- 🛠 **Admin Panel:** Integrated support for [Sveltia CMS](https://github.com/sveltia/sveltia-cms), allowing for easy content management and updates.
 
 ## 🛠 Tech Stack
 
