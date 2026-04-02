@@ -11,7 +11,8 @@ import {
   SunIcon,
   WifiSignalIcon,
   CheckIcon,
-  SolidLockIcon
+  SolidLockIcon,
+  GithubIcon
 } from './Icons';
 
 interface TopPanelProps {
@@ -290,6 +291,17 @@ const TopPanel: React.FC<TopPanelProps> = ({ activeWorkspace, onWorkspaceChange,
       {/* Right side: Status mock */}
       <div className="flex items-center space-x-1 text-slate-400 h-full">
         
+        {/* GitHub Link */}
+        <a 
+          href="https://github.com/FareEditor/FareOS" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="flex items-center px-2 py-1 rounded-md transition-colors hover:bg-white/5 hover:text-slate-200"
+          title="GitHub Repository"
+        >
+          <GithubIcon className="w-3.5 h-3.5" />
+        </a>
+
         {/* System Widget Trigger (Combined CPU/RAM) */}
         <div className="relative flex items-center h-full widget-container">
           <div 
