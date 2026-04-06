@@ -75,15 +75,15 @@
     },
     {
       "id": "mg-2",
-      "title": "MacOS Game Launch Style",
-      "titleRu": "MacOS стиль запуска игры",
-      "subtitle": "Systems Can Be Visually Beautiful",
-      "subtitleRu": "И системы можно красиво визуализировать",
-      "difficulty": "easy",
-      "text": "I've been a fan of system interfaces for a long time. So creating an animation of some system component was just a matter of time.",
-      "textRu": "Я давно являюсь фанатом системных интерфейсов. Так что для меня анимация какого-то системного компонента была лишь вопросом времени.",
-      "url": "https://youtu.be/3cccfWBxXHg",
-      "thumbnail": "/pic/mg-2.png"
+      "title": "Trailer for the plugin",
+      "titleRu": "Трейлер для плагина",
+      "subtitle": "I'm a bit of a developer)",
+      "subtitleRu": "Я немного разработчик)",
+      "difficulty": "medium",
+      "text": "I'm constantly improving my workflow. If the right tool doesn't exist, I create it myself. That's how I created this plugin and its trailer.",
+      "textRu": "Я постоянно улучшаю свой воркфлоу. Если нужного инструмента нет - я его создаю сам. Так я создал этот плагин и трейлер к нему",
+      "url": "https://youtu.be/VnjO_-MVVsw",
+      "thumbnail": "/pic/No more files.webp"
     }
   ]
 }
