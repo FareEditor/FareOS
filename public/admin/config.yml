@@ -3,8 +3,6 @@ backend:
   repo: FareEditor/FareOS
   branch: main
 
-local_backend: true
-
 media_folder: "public/pic"
 public_folder: "/pic"
 editor:
