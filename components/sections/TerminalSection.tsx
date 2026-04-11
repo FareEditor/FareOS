@@ -65,8 +65,8 @@ const TerminalSection: React.FC = () => {
           <div><span className="text-accent1 font-bold">Uptime:</span> 13 hours, 45 mins</div>
           <div><span className="text-accent1 font-bold">Packages:</span> 172 (pacman)</div>
           <div><span className="text-accent1 font-bold">Shell:</span> bash 5.2.37</div>
-          <div><span className="text-accent1 font-bold">WM:</span> Hyprland (Wayland)</div>
-          <div><span className="text-accent1 font-bold">Terminal:</span> konsole 25.12.2-1</div>
+          <div><span className="text-accent1 font-bold">WM:</span> Niri (Wayland)</div>
+          <div><span className="text-accent1 font-bold">Terminal:</span> alacritty 0.17.0-1</div>
           <div><span className="text-accent1 font-bold">CPU:</span> AMD Ryzen 5 7600X (12) @ 4.70 GHz</div>
           <div><span className="text-accent1 font-bold">GPU:</span> NVIDIA GeForce RTX 4070 Ti SUPER (15.68 GiB) [Discrete]</div>
           <div><span className="text-accent1 font-bold">Memory:</span> 15.86 GiB / 63.60 GiB (25%)</div>
