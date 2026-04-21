@@ -49,7 +49,7 @@ const ContactSection: React.FC = () => {
 
       <div className="text-center mb-12">
         <h2 className="text-4xl font-heading text-white mb-2">
-          <LocalizedText en="Ready to update your videos?" ru="Готовы вывести свой контент на новый уровень?" />
+          <LocalizedText en="Ready to update your videos?" ru="Готовы обновить свой контент?" />
         </h2>
         <p className="text-slate-400 font-mono text-sm hidden md:block">
           <LocalizedText en="Then go ahead. Write and I'll make your content much better." ru="Тогда вперёд. Пишите и я сделаю ваш контент лучше в разы" />
